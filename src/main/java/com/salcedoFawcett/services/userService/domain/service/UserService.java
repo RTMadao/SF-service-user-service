@@ -4,7 +4,9 @@ import com.salcedoFawcett.services.userService.domain.model.SecureUser;
 import com.salcedoFawcett.services.userService.domain.model.User;
 import com.salcedoFawcett.services.userService.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,10 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    @Qualifier(value = "remoteRestTemplate")
+    private RestTemplate restTemplate;
 
     public List<SecureUser> getAll(){
         return  userRepository.getAll().stream()
@@ -31,6 +37,8 @@ public class UserService {
     }
 
     public User newUser(User user){
+        String encodePassword = restTemplate.getForObject("http://auth-service/security/encode_user/"+user.getPassword(),String.class);
+        user.setPassword(encodePassword);
         return userRepository.save(user);
     }
 

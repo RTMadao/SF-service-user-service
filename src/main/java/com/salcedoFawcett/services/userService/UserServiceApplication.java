@@ -2,7 +2,10 @@ package com.salcedoFawcett.services.userService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableEurekaClient
@@ -12,4 +15,9 @@ public class UserServiceApplication {
 		SpringApplication.run(UserServiceApplication.class, args);
 	}
 
+	@LoadBalanced
+	@Bean(name="remoteRestTemplate")
+	RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }
