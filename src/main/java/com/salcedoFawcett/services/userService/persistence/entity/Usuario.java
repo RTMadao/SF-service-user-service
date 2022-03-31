@@ -1,6 +1,7 @@
 package com.salcedoFawcett.services.userService.persistence.entity;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -13,6 +14,13 @@ public class Usuario {
     @Column(name = "pass")
     private String password;
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_access_module",
+            joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "moduleId"))
+    Set<Modulo> accesos;
 
     public int getId() {
         return id;
@@ -44,5 +52,13 @@ public class Usuario {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Modulo> getAccesos() {
+        return accesos;
+    }
+
+    public void setAccesos(Set<Modulo> accesos) {
+        this.accesos = accesos;
     }
 }

@@ -1,5 +1,10 @@
 package com.salcedoFawcett.services.userService.web.controller;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.salcedoFawcett.services.userService.domain.model.Module;
 import com.salcedoFawcett.services.userService.domain.model.SecureUser;
 import com.salcedoFawcett.services.userService.domain.model.User;
 import com.salcedoFawcett.services.userService.domain.service.UserService;
@@ -8,7 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -35,7 +43,9 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public  ResponseEntity<SecureUser> updateUser(@RequestBody User user){
+    public  ResponseEntity<SecureUser> updateUser(@RequestBody User user) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        user.setAccess(mapper.convertValue(user.getAccess(), new TypeReference<Set<Module>>(){}));
         if (userService.updateUser(user)) return new ResponseEntity<>(user.getSecureUser(),HttpStatus.OK);
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
