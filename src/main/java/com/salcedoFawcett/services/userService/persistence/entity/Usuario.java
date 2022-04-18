@@ -14,6 +14,8 @@ public class Usuario {
     @Column(name = "pass")
     private String password;
     private String name;
+    private String email;
+    private boolean isActive;
 
     @ManyToMany
     @JoinTable(
@@ -60,5 +62,21 @@ public class Usuario {
 
     public void setAccesos(Set<Modulo> accesos) {
         this.accesos = accesos;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

@@ -8,12 +8,16 @@ public class SecureUser {
     private String username;
     private String name;
     private Set access;
+    private boolean isActive;
+    private String email;
 
-    public SecureUser(int id, String username, String name, Set access) {
+    public SecureUser(int id, String username, String name, Set access, boolean isActive, String email) {
         this.id = id;
         this.username = username;
         this.name = name;
         this.access = access;
+        this.isActive = isActive;
+        this.email = email;
     }
 
     public int getId() {
@@ -42,5 +46,25 @@ public class SecureUser {
 
     public Set getAccess() {
         return access;
+    }
+
+    public void setAccess(Set access) {
+        this.access = access;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

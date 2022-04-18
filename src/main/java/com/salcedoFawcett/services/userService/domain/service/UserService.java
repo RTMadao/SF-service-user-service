@@ -1,5 +1,7 @@
 package com.salcedoFawcett.services.userService.domain.service;
 
+import com.salcedoFawcett.services.userService.client.SecurityClient;
+import com.salcedoFawcett.services.userService.domain.exception.UserNotFoundException;
 import com.salcedoFawcett.services.userService.domain.model.SecureUser;
 import com.salcedoFawcett.services.userService.domain.model.User;
 import com.salcedoFawcett.services.userService.domain.repository.UserRepository;
@@ -19,6 +21,9 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private SecurityClient securityClient;
+
+    @Autowired
     @Qualifier(value = "remoteRestTemplate")
     private RestTemplate restTemplate;
 
@@ -32,29 +37,42 @@ public class UserService {
         return userRepository.getUserById(userId);
     }
 
-    public User getUserByUsername(String username){
+    public Optional<User> getUserByUsername(String username){
         return userRepository.getUserByUsername(username);
     }
 
     public User newUser(User user){
-        String encodePassword = restTemplate.getForObject("http://auth-service/security/encode_user/"+user.getPassword(),String.class);
+        String encodePassword = securityClient.encodePassword(user.getPassword()).getBody();
         user.setPassword(encodePassword);
+        user.setActive(true);
         return userRepository.save(user);
     }
 
-    public boolean updateUser(User user){
+    public boolean updateUser(User user) throws UserNotFoundException {
         if (userRepository.userExist(user.getId())){
+            user.setPassword(userRepository.getUserById(user.getId()).map(User::getPassword).orElseThrow(() -> new UserNotFoundException("Usuario No encontrado")));
             userRepository.save(user);
             return true;
         }
-        else return false;
+        else {
+            throw new UserNotFoundException("Usuario No encontrado");
+        }
+    }
+
+    public boolean updateUserPassword(String newPass, int userId) throws UserNotFoundException {
+        userRepository.save(userRepository.getUserById(userId).map(user -> {
+            String encodePassword = securityClient.encodePassword(newPass).getBody();
+            user.setPassword(encodePassword);
+            return user;
+        }).orElseThrow(() -> new UserNotFoundException("Usuario No encontrado")));
+        return true;
     }
 
     public boolean delete( int userId){
-        if (userRepository.userExist(userId)){
-            userRepository.delete(userId);
+        return userRepository.getUserById(userId).map(user -> {
+            user.setActive(false);
+            userRepository.save(user);
             return true;
-        }
-        else return false;
+        }).orElse(false);
     }
 }

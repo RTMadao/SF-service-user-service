@@ -14,6 +14,6 @@ public interface ModuleMapper {
     List<Module> toModules(List<Modulo> modulo);
 
     @InheritInverseConfiguration()
-    Modulo tomodulo(Module module);
+    Modulo toModulo(Module module);
 
 }

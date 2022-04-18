@@ -31,7 +31,7 @@ public class ModuloRepository implements ModuleRepository {
 
     @Override
     public Module save(Module module) {
-        return mapper.toModule(moduloCrudRepository.save(mapper.tomodulo(module)));
+        return mapper.toModule(moduloCrudRepository.save(mapper.toModulo(module)));
     }
 
     @Override
