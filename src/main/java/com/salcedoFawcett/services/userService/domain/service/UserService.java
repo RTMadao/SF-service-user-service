@@ -1,5 +1,6 @@
 package com.salcedoFawcett.services.userService.domain.service;
 
+import com.salcedoFawcett.services.userService.client.EmailClient;
 import com.salcedoFawcett.services.userService.client.SecurityClient;
 import com.salcedoFawcett.services.userService.domain.exception.UserNotFoundException;
 import com.salcedoFawcett.services.userService.domain.model.SecureUser;
@@ -24,8 +25,7 @@ public class UserService {
     private SecurityClient securityClient;
 
     @Autowired
-    @Qualifier(value = "remoteRestTemplate")
-    private RestTemplate restTemplate;
+    private EmailClient emailClient;
 
     public List<SecureUser> getAll(){
         return  userRepository.getAll().stream()
@@ -45,7 +45,9 @@ public class UserService {
         String encodePassword = securityClient.encodePassword(user.getPassword()).getBody();
         user.setPassword(encodePassword);
         user.setActive(true);
-        return userRepository.save(user);
+        User newUser = userRepository.save(user);
+        emailClient.sendNewUserChangePasswordEmail(newUser.getUsername());
+        return newUser;
     }
 
     public boolean updateUser(User user) throws UserNotFoundException {

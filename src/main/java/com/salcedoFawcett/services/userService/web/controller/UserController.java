@@ -58,6 +58,7 @@ public class UserController {
 
     @PostMapping("/save")
     public  ResponseEntity<SecureUser> saveUser(@RequestBody User user){
+        user.setPassword("SalcedoFawcett");
         return new ResponseEntity<>(userService.newUser(user).getSecureUser(),HttpStatus.CREATED);
     }
 
