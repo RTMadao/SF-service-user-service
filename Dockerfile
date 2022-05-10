@@ -1,6 +1,6 @@
 FROM openjdk:11-jre-slim
 
-COPY build/libs/userService-0.1.1-SNAPSHOT.jar home/spring/salcedo_fawcett/user_service.jar
+COPY build/libs/userService-1.0.0-SNAPSHOT.jar home/spring/salcedo_fawcett/user_service.jar
 EXPOSE 3003
 
 # Add docker-compose-wait tool -------------------
